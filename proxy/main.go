@@ -1,35 +1,38 @@
 package main
 
 import (
-	"fmt"
-	"github.com/go-chi/chi"
-	"log"
 	"net/http"
-	"os"
-	"time"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
+	revProx := NewReverseProxy("hugo", "1313")
+
 	r := chi.NewRouter()
 
-	// ...
+	r.Use(middleware.Logger)
+	r.Use(revProx.ReverseProxy)
+
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {})
 
 	http.ListenAndServe(":8080", r)
 }
 
-const content = ``
+// const content = ``
 
-func WorkerTest() {
-	t := time.NewTicker(1 * time.Second)
-	var b byte = 0
-	for {
-		select {
-		case <-t.C:
-			err := os.WriteFile("/app/static/_index.md", []byte(fmt.Sprintf(content, b)), 0644)
-			if err != nil {
-				log.Println(err)
-			}
-			b++
-		}
-	}
-}
+// func WorkerTest() {
+// 	t := time.NewTicker(1 * time.Second)
+// 	var b byte = 0
+// 	for {
+// 		select {
+// 		case <-t.C:
+// 			err := os.WriteFile("/app/static/_index.md", []byte(fmt.Sprintf(content, b)), 0644)
+// 			if err != nil {
+// 				log.Println(err)
+// 			}
+// 			b++
+// 		}
+// 	}
+// }
