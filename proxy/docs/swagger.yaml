@@ -1,0 +1,89 @@
+basePath: /
+definitions:
+  main.Address:
+    properties:
+      city:
+        type: string
+      house:
+        type: string
+      lat:
+        type: string
+      lon:
+        type: string
+      street:
+        type: string
+    type: object
+  main.ResponseAddress:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/main.Address'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Documentation of Proxy API.
+  title: Proxy
+  version: "1.0"
+paths:
+  //api/address/geocode:
+    post:
+      consumes:
+      - application/json
+      description: Get full address info by coordinates
+      parameters:
+      - description: latitude
+        in: query
+        name: lat
+        required: true
+        type: string
+      - description: longitude
+        in: query
+        name: lng
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ResponseAddress'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: GeoCode
+      tags:
+      - geocode
+  //api/address/search:
+    post:
+      consumes:
+      - application/json
+      description: Get full address info by its part
+      parameters:
+      - description: part of address
+        in: query
+        name: query
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ResponseAddress'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Adress Search
+      tags:
+      - address
+swagger: "2.0"
