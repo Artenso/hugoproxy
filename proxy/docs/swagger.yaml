@@ -1,0 +1,153 @@
+basePath: /
+definitions:
+  main.Address:
+    properties:
+      city:
+        type: string
+      house:
+        type: string
+      lat:
+        type: string
+      lon:
+        type: string
+      street:
+        type: string
+    type: object
+  main.RequestAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  main.ResponseAddress:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/main.Address'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Documentation of Proxy API.
+  title: Proxy
+  version: "1.0"
+paths:
+  /api/address/geocode:
+    post:
+      consumes:
+      - application/json
+      description: Get full address info by coordinates
+      parameters:
+      - description: latitude
+        in: query
+        name: lat
+        required: true
+        type: string
+      - description: longitude
+        in: query
+        name: lng
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ResponseAddress'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: GeoCode
+      tags:
+      - address
+  /api/address/search:
+    post:
+      consumes:
+      - application/json
+      description: Get full address info by its part
+      parameters:
+      - description: part of address
+        in: query
+        name: query
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ResponseAddress'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Adress Search
+      tags:
+      - address
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: returns JWT if you are registered user
+      parameters:
+      - description: registration data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/main.RequestAuth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Log in
+      tags:
+      - auth
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: Saves your username and password in db
+      parameters:
+      - description: registration data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/main.RequestAuth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Registration
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
