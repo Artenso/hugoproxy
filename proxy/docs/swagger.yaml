@@ -13,6 +13,13 @@ definitions:
       street:
         type: string
     type: object
+  main.RequestAuth:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   main.ResponseAddress:
     properties:
       addresses:
@@ -27,7 +34,7 @@ info:
   title: Proxy
   version: "1.0"
 paths:
-  //api/address/geocode:
+  /api/address/geocode:
     post:
       consumes:
       - application/json
@@ -52,14 +59,18 @@ paths:
             $ref: '#/definitions/main.ResponseAddress'
         "400":
           description: Bad Request
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
         "500":
           description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
       summary: GeoCode
       tags:
-      - geocode
-  //api/address/search:
+      - address
+  /api/address/search:
     post:
       consumes:
       - application/json
@@ -79,11 +90,64 @@ paths:
             $ref: '#/definitions/main.ResponseAddress'
         "400":
           description: Bad Request
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
         "500":
           description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
       summary: Adress Search
       tags:
       - address
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: returns JWT if you are registered user
+      parameters:
+      - description: registration data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/main.RequestAuth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Log in
+      tags:
+      - auth
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: Saves your username and password in db
+      parameters:
+      - description: registration data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/main.RequestAuth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Registration
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

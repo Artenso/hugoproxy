@@ -9,8 +9,13 @@
     "host": "localhost:8080",
     "basePath": "/",
     "paths": {
-        "//api/address/geocode": {
+        "/api/address/geocode": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get full address info by coordinates",
                 "consumes": [
                     "application/json"
@@ -19,7 +24,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "geocode"
+                    "address"
                 ],
                 "summary": "GeoCode",
                 "parameters": [
@@ -48,6 +53,9 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
                     "404": {
                         "description": "Not Found"
                     },
@@ -57,8 +65,13 @@
                 }
             }
         },
-        "//api/address/search": {
+        "/api/address/search": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get full address info by its part",
                 "consumes": [
                     "application/json"
@@ -89,11 +102,82 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
                     "404": {
                         "description": "Not Found"
                     },
                     "500": {
                         "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "description": "returns JWT if you are registered user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log in",
+                "parameters": [
+                    {
+                        "description": "registration data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.RequestAuth"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "description": "Saves your username and password in db",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Registration",
+                "parameters": [
+                    {
+                        "description": "registration data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.RequestAuth"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
                     }
                 }
             }
@@ -120,6 +204,17 @@
                 }
             }
         },
+        "main.RequestAuth": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "main.ResponseAddress": {
             "type": "object",
             "properties": {
@@ -130,6 +225,13 @@
                     }
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }
